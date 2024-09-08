@@ -39,7 +39,7 @@ class Game:
 
         self.res = resolution
         self.grid = np.zeros(grid, dtype=int)
-        self.rules = (3, 5)
+        self.rules = [[2, 3], [3]]
 
         self.screen = pygame.display.set_mode(self.res)
         self.clock = pygame.time.Clock()
@@ -60,21 +60,16 @@ class Game:
         return count
 
     def update_grid(self):
-        new_grid = np.copy(self.grid)
         rows, cols = len(self.grid), len(self.grid[0])
 
         for row in range(rows):
             for col in range(cols):
                 neighbors = self.check([row, col])
 
-                if self.grid[row][col] == 1:
-                    if neighbors < self.rules[0] or neighbors > self.rules[1]:
-                        new_grid[row][col] = 0
-                else:
-                    if neighbors == self.rules[1]:
-                        new_grid[row][col] = 1
-
-        self.grid = new_grid
+                if self.grid[row][col] == 1 and neighbors not in self.rules[0]:
+                    self.grid[row][col] = 0
+                elif self.grid[row][col] == 0 and neighbors in self.rules[1]:
+                    self.grid[row][col] = 1
 
     def run(self):
         while True:
@@ -119,5 +114,5 @@ class Game:
             self.clock.tick(5)
 
 if __name__ == '__main__':
-    game = Game((20, 20))
+    game = Game((30, 30))
     game.run()
