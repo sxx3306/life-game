@@ -13,17 +13,13 @@ class Sprite(pygame.sprite.Sprite):
         self.width = width
         self.height = height
 
-    # Method to handle button click
     def handle_click(self, event):
         if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
             self.on_click()
 
-    # Custom method for what happens when clicked
     def on_click(self):
         print("Button clicked!")
-        # You can add additional logic here (e.g., start the game)
 
-    # Method to draw the sprite
     def blit(self, screen):
         screen.blit(self.image, self.rect)
 
