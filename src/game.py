@@ -26,7 +26,6 @@ class Sprite(pygame.sprite.Sprite):
         else:
             self.start = True
             self.image.set_alpha(0)
-
         return True
 
     def blit(self, screen):
@@ -39,7 +38,7 @@ class Game:
 
         self.res = resolution
         self.grid = np.zeros(grid, dtype=int)
-        self.rules = [[2, 3], [3]]
+        self.rules = [[2, 3], [3]]  # Survival: 2, 3. Birth: 3.
 
         self.screen = pygame.display.set_mode(self.res)
         self.clock = pygame.time.Clock()
@@ -61,15 +60,18 @@ class Game:
 
     def update_grid(self):
         rows, cols = len(self.grid), len(self.grid[0])
+        new_grid = np.copy(self.grid)  # Create a copy of the grid to store updates.
 
         for row in range(rows):
             for col in range(cols):
                 neighbors = self.check([row, col])
 
                 if self.grid[row][col] == 1 and neighbors not in self.rules[0]:
-                    self.grid[row][col] = 0
+                    new_grid[row][col] = 0  # Клетка умирает
                 elif self.grid[row][col] == 0 and neighbors in self.rules[1]:
-                    self.grid[row][col] = 1
+                    new_grid[row][col] = 1  # Клетка рождается
+
+        self.grid = new_grid
 
     def run(self):
         while True:
@@ -111,7 +113,7 @@ class Game:
 
             self.start_button.blit(self.screen)
             pygame.display.flip()
-            self.clock.tick(5)
+            self.clock.tick(60)
 
 if __name__ == '__main__':
     game = Game((30, 30))
