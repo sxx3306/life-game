@@ -3,6 +3,10 @@ import numpy as np
 
 
 class Sprite(pygame.sprite.Sprite):
+    """
+    Args:
+        pygame (_type_): _description_
+    """
     def __init__(self, color: tuple, width: float, height: float, position: tuple):
         super().__init__()
         self.image = pygame.Surface((width, height))
@@ -14,11 +18,11 @@ class Sprite(pygame.sprite.Sprite):
         self.height = height
         self.start = False
 
-    def handle_click(self, event):
+    def handle_click(self, event) -> None:
         if event.type == pygame.MOUSEBUTTONUP and self.rect.collidepoint(event.pos):
             self.on_click()
 
-    def on_click(self):
+    def on_click(self) -> bool:
         if self.start: 
             self.start = False
             self.image.fill('GREEN')
@@ -26,27 +30,36 @@ class Sprite(pygame.sprite.Sprite):
         else:
             self.start = True
             self.image.set_alpha(0)
+            
         return True
 
-    def blit(self, screen):
+    def blit(self, screen) -> None:
         screen.blit(self.image, self.rect)
 
 
 class Game:
-    def __init__(self, grid: tuple[int, int], resolution: tuple[float, float] = (800.0, 600.0), cell_size: int = 10):
+    """
+    Game class for game of life
+
+    Args:
+        grid (_tuple[int, int]_): shape of the grid.
+        resolution (_tuple[float, float]_): the resolution of the window.
+        rules (_list[list, list]_): Rules for the game of life, first list stands for survival rules, second one for birth. 
+    """
+    def __init__(self, grid: tuple[int, int], resolution: tuple[float, float] = (800.0, 600.0), rules: list[list] = [[2, 3], [3]]):
         pygame.init()
 
         self.res = resolution
         self.grid = np.zeros(grid, dtype=int)
-        self.rules = [[2, 3], [3]]  # Survival: 2, 3. Birth: 3.
+        self.rules = rules  # Survival: 2, 3. Birth: 3.
 
         self.screen = pygame.display.set_mode(self.res)
         self.clock = pygame.time.Clock()
 
-        self.start_button = Sprite('GREEN', self.res[0] / len(self.grid) * 2, self.res[0], (self.res[0] / len(self.grid) * (len(self.grid) - 2), 0))
+        self.start_button = Sprite('GREEN', self.res[0] / len(self.grid) * 2, self.res[0] / 2, (self.res[0] / len(self.grid) * (len(self.grid) - 2), 0))
         self.running = False
 
-    def check(self, index: list[int, int]):
+    def check(self, index: list[int, int]) -> int:
         count = 0
         rows, cols = len(self.grid), len(self.grid[0])
 
@@ -58,9 +71,9 @@ class Game:
 
         return count
 
-    def update_grid(self):
+    def update_grid(self) -> np.ndarray:
         rows, cols = len(self.grid), len(self.grid[0])
-        new_grid = np.copy(self.grid)  # Create a copy of the grid to store updates.
+        new_grid = np.copy(self.grid)  # Копия для правильных вычеслений
 
         for row in range(rows):
             for col in range(cols):
